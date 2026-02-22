@@ -603,7 +603,7 @@ static int
 parse_next_addrs(const char *addrs, const char **next, int *domain, u8 *start_bus, u8 *end_bus, u64 *addr, u32 *length)
 {
   u64 ullnum;
-  const char *sep1, *sep2;
+  const char *addrsptr, *sep1, *sep2;
   int addr_len;
   char *endptr;
   long num;
@@ -617,14 +617,14 @@ parse_next_addrs(const char *addrs, const char **next, int *domain, u8 *start_bu
       return 0;
     }
 
-  endptr = strchr(addrs, ',');
-  if (endptr)
-    addr_len = endptr - addrs;
+  addrsptr = strchr(addrs, ',');
+  if (addrsptr)
+    addr_len = addrsptr - addrs;
   else
     addr_len = strlen(addrs);
 
   if (next)
-    *next = endptr ? (endptr+1) : NULL;
+    *next = addrsptr ? (addrsptr+1) : NULL;
 
   sep1 = memchr(addrs, ':', addr_len);
   if (!sep1)
