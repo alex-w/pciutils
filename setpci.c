@@ -488,7 +488,7 @@ parse_options(int argc, char **argv)
     {
       char *c = argv[i++] + 1;
       char *d = c;
-      char *e;
+      const char *e;
       while (*c)
 	switch (*c)
 	  {
