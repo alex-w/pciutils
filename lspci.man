@@ -204,6 +204,10 @@ Use direct hardware access via Intel configuration mechanism 2.
 .B -F <file>
 Instead of accessing real hardware, read the list of devices and values of their
 configuration registers from the given file produced by an earlier run of lspci -x.
+If
+.I file
+is a single dash (\fB-\fP), read the contents from stdin.
+.IP
 This is very useful for analysis of user-supplied bug reports, because you can display
 the hardware configuration in any way you want without disturbing the user with
 requests for more dumps.

@@ -122,16 +122,21 @@ static void
 dump_init(struct pci_access *a)
 {
   char *name = pci_get_param(a, "dump.name");
-  FILE *f;
+  const char *err;
 
   if (!name)
     a->error("dump: File name not given.");
-  if (!(f = fopen(name, "r")))
-    a->error("dump: Cannot open %s: %s", name, strerror(errno));
 
-  const char *err = dump_parse(a, f);
-
-  fclose(f);
+  if (!strcmp(name, "-"))
+    err = dump_parse(a, stdin);
+  else
+    {
+      FILE *f = fopen(name, "r");
+      if (!f)
+	a->error("dump: Cannot open %s: %s", name, strerror(errno));
+      err = dump_parse(a, f);
+      fclose(f);
+    }
 
   if (err)
     a->error("dump: %s", err);
