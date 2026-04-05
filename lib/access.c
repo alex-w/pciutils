@@ -79,6 +79,13 @@ pci_free_properties(struct pci_dev *d)
       d->properties = p->next;
       pci_mfree(p);
     }
+
+  while (d->msi_routing)
+    {
+      struct pci_msi_routing *mr = d->msi_routing;
+      d->msi_routing = mr->next;
+      free(mr);
+    }
 }
 
 void pci_free_dev(struct pci_dev *d)

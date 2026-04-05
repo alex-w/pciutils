@@ -339,6 +339,37 @@ sysfs_fill_slots(struct pci_access *a)
 }
 
 static void
+sysfs_fill_msi_routing(struct pci_dev *d)
+{
+  char namebuf[OBJNAMELEN];
+
+  sysfs_obj_name(d, "msi_irqs", namebuf);
+  DIR *dir = opendir(namebuf);
+  if (!dir)
+    {
+      clear_fill(d, PCI_FILL_MSI_ROUTING);
+      return;
+    }
+
+  struct pci_msi_routing **plast = &d->msi_routing;
+  struct dirent *de;
+  while (de = readdir(dir))
+    {
+      int irq;
+      if (sscanf(de->d_name, "%d", &irq) == 1)
+	{
+	  struct pci_msi_routing *mr = pci_malloc(d->access, sizeof(*mr));
+	  *plast = mr;
+	  plast = &mr->next;
+	  mr->next = NULL;
+	  mr->irq = irq;
+	}
+    }
+
+  closedir(dir);
+}
+
+static void
 sysfs_fill_info(struct pci_dev *d, unsigned int flags)
 {
   int value, want_class, want_class_ext;
@@ -504,6 +535,9 @@ sysfs_fill_info(struct pci_dev *d, unsigned int flags)
       if (sysfs_get_string(d, "rcd_link_status", buf, 0))
         d->rcd_link_status = strtoul(buf, NULL, 16);
     }
+
+  if (want_fill(d, flags, PCI_FILL_MSI_ROUTING))
+    sysfs_fill_msi_routing(d);
 
   pci_generic_fill_info(d, flags);
 }
