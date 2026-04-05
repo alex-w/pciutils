@@ -164,6 +164,11 @@ pci_filter_parse_slot_v38(struct pci_filter *f, char *str)
   return NULL;
 }
 
+int pci_filter_has_slot(struct pci_filter *f)
+{
+  return f->domain >= 0 || f->bus >= 0 || f->slot >= 0 || f->func >= 0;
+}
+
 /* ID filter syntax: [vendor]:[device][:class[:progif]] */
 
 char *
@@ -192,6 +197,11 @@ pci_filter_parse_id_v38(struct pci_filter *f, char *str)
     return "Invalid programming interface code";
 
   return NULL;
+}
+
+int pci_filter_has_id(struct pci_filter *f)
+{
+  return f->vendor >= 0 || f->device >= 0 || f->device_class >= 0 || f->prog_if >= 0;
 }
 
 int

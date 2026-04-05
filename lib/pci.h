@@ -278,6 +278,8 @@ void pci_filter_init(struct pci_access *, struct pci_filter *) PCI_ABI;
 char *pci_filter_parse_slot(struct pci_filter *, char *) PCI_ABI;
 char *pci_filter_parse_id(struct pci_filter *, char *) PCI_ABI;
 int pci_filter_match(struct pci_filter *, struct pci_dev *) PCI_ABI;
+int pci_filter_has_slot(struct pci_filter *) PCI_ABI;
+int pci_filter_has_id(struct pci_filter *) PCI_ABI;
 
 /*
  *	Conversion of PCI IDs to names (according to the pci.ids file)
