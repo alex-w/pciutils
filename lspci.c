@@ -790,6 +790,83 @@ show_htype_unknown(struct device *d)
   show_rom(d, -1);
 }
 
+static int compare_msi(const void *a, const void *b)
+{
+  const struct pci_msi_routing * const *pa = a, * const *pb = b;
+  const struct pci_msi_routing *mra = *pa, *mrb = *pb;
+
+  if (mra->irq < mrb->irq)
+    return -1;
+  else if (mra->irq > mrb->irq)
+    return 1;
+  else
+    return 0;
+}
+
+static void
+show_irqs(struct device *d)
+{
+  struct pci_dev *p = d->dev;
+  byte int_pin = get_conf_byte(d, PCI_INTERRUPT_PIN);
+  word command = get_conf_word(d, PCI_COMMAND);
+  int irq = (command & PCI_COMMAND_DISABLE_INTx) ? 0 : p->irq;
+
+  pci_fill_info(p, PCI_FILL_MSI_ROUTING);
+
+  struct pci_msi_routing **msi_table = NULL;
+  int num_msi = 0;
+  if (p->msi_routing)
+    {
+      for (struct pci_msi_routing *mr = p->msi_routing; mr; mr = mr->next)
+	num_msi++;
+      msi_table = xmalloc(num_msi * sizeof(struct pci_msi_routing *));
+      num_msi = 0;
+      for (struct pci_msi_routing *mr = p->msi_routing; mr; mr = mr->next)
+	msi_table[num_msi++] = mr;
+      qsort(msi_table, num_msi, sizeof(struct pci_msi_routing *), compare_msi);
+    }
+
+  if (int_pin || irq || num_msi)
+    {
+      printf("\tInterrupts: ");
+      if (int_pin || irq)
+	{
+	  if (int_pin >= 1 && int_pin <= 4)
+	    printf("pin %c", 'A' + int_pin);
+	  else if (int_pin)
+	    printf("pin #%d", int_pin);
+	  else
+	    printf("unknown pin");
+	  if (command & PCI_COMMAND_DISABLE_INTx)
+	    printf(" disabled");
+	  else if (irq)
+	    printf(" routed to IRQ " PCIIRQ_FMT, irq);
+	}
+      if (num_msi)
+	{
+	  if (int_pin || irq)
+	    printf(", ");
+	  printf("MSI(X) routed to IRQ ");
+	  int i = 0;
+	  while (i < num_msi)
+	    {
+	      if (i)
+		printf(", ");
+	      int start = i++;
+	      while (i < num_msi && msi_table[i]->irq == msi_table[i-1]->irq + 1)
+		i++;
+	      if (i == start + 1)
+		printf("%d", msi_table[start]->irq);
+	      else
+		printf("%d-%d", msi_table[start]->irq, msi_table[i-1]->irq);
+	    }
+	}
+      printf("\n");
+    }
+
+  free(msi_table);
+}
+
 static void
 show_verbose(struct device *d)
 {
@@ -830,7 +907,7 @@ show_verbose(struct device *d)
       break;
     default:
       if (!d->no_config_access)
-      printf("\t!!! Unknown header type %02x\n", htype);
+	printf("\t!!! Unknown header type %02x\n", htype);
       bist = 0;
       min_gnt = max_lat = 0;
       unknown_config_data = 1;
@@ -898,24 +975,7 @@ show_verbose(struct device *d)
   if (verbose > 1)
     {
       if (!unknown_config_data)
-	{
-	  byte int_pin = get_conf_byte(d, PCI_INTERRUPT_PIN);
-	  word command = get_conf_word(d, PCI_COMMAND);
-	  int irq = (command & PCI_COMMAND_DISABLE_INTx) ? 0 : p->irq;
-	  if (int_pin || irq)
-	    {
-	      printf("\tInterrupt: ");
-	      if (int_pin)
-		printf("pin %c", 'A' + int_pin);
-	      else
-		printf("unknown pin");
-	      if (command & PCI_COMMAND_DISABLE_INTx)
-		printf(" disabled");
-	      else if (irq)
-		printf(" routed to IRQ " PCIIRQ_FMT, irq);
-	      printf("\n");
-	    }
-	}
+	show_irqs(d);
       if (p->numa_node != -1)
 	printf("\tNUMA node: %d\n", p->numa_node);
       if (iommu_group = pci_get_string_property(p, PCI_FILL_IOMMU_GROUP))
