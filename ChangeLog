@@ -1,3 +1,31 @@
+2026-04-05  Martin Mares <mj@ucw.cz>
+
+	* Released as 3.15.0.
+
+	* New capabilities are decoded: MMIO Register Block Locator,
+	  Flit Error Injection, Flit Logging.
+
+	* Decoding of PCIe capabilities updated to Gen7.
+
+	* Both lspci and setpci warn when the "-s" or "-d" option
+	  is given multiple times.
+
+	* Improved display of interrupts in "lspci -vv". Routing of
+	  interrupt pins is shown only if the pins are not disabled.
+	  Routing of MSI(X) interrupts is shown when available
+	  (which is currently supported by the sysfs back-end only).
+
+	* Minor improvements to Windows back-ends.
+
+	* The dump back-end can read the dump from stdin when given "-"
+	  as a file name.
+
+	* FreeBSD supports 64-bit addresses.
+
+	* Added README.DJGPP.
+
+	* Updated pci.ids.
+
 2025-06-21  Martin Mares <mj@ucw.cz>
 
 	* Released as 3.14.0.
