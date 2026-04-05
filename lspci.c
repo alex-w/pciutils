@@ -1135,11 +1135,15 @@ main(int argc, char **argv)
 	pacc->buscentric = 1;
 	break;
       case 's':
+	if (pci_filter_has_slot(&filter))
+	  fprintf(stderr, "Multiple -s options are given, only the last one has effect.\n");
 	if (msg = pci_filter_parse_slot(&filter, optarg))
 	  die("-s: %s", msg);
 	opt_filter = 1;
 	break;
       case 'd':
+	if (pci_filter_has_id(&filter))
+	  fprintf(stderr, "Multiple -d options are given, only the last one has effect.\n");
 	if (msg = pci_filter_parse_id(&filter, optarg))
 	  die("-d: %s", msg);
 	opt_filter = 1;

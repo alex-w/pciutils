@@ -558,10 +558,14 @@ static int parse_filter(int argc, char **argv, int i, struct group *group)
   switch (c[1])
     {
     case 's':
+      if (pci_filter_has_slot(&group->filter))
+	  fprintf(stderr, "Multiple -s options are given, only the last one has effect.\n");
       if (d = pci_filter_parse_slot(&group->filter, d))
 	parse_err("Unable to parse filter -s %s", d);
       break;
     case 'd':
+      if (pci_filter_has_id(&group->filter))
+	fprintf(stderr, "Multiple -d options are given, only the last one has effect.\n");
       if (d = pci_filter_parse_id(&group->filter, d))
 	parse_err("Unable to parse filter -d %s", d);
       break;
