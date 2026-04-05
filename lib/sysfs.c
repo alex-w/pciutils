@@ -364,7 +364,7 @@ sysfs_fill_info(struct pci_dev *d, unsigned int flags)
       want_class_ext = want_fill(d, flags, PCI_FILL_CLASS_EXT);
       if (want_class || want_class_ext)
         {
-	  value = sysfs_get_value(d, "class", 1) & 0xffff;
+	  value = sysfs_get_value(d, "class", 1) & 0xffffff;
 	  if (want_class)
 	    d->device_class = value >> 8;
 	  if (want_class_ext)
