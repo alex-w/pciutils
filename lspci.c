@@ -897,10 +897,25 @@ show_verbose(struct device *d)
 
   if (verbose > 1)
     {
-      byte int_pin = unknown_config_data ? 0 : get_conf_byte(d, PCI_INTERRUPT_PIN);
-      if (int_pin || p->irq)
-	printf("\tInterrupt: pin %c routed to IRQ " PCIIRQ_FMT "\n",
-	       (int_pin ? 'A' + int_pin - 1 : '?'), p->irq);
+      if (!unknown_config_data)
+	{
+	  byte int_pin = get_conf_byte(d, PCI_INTERRUPT_PIN);
+	  word command = get_conf_word(d, PCI_COMMAND);
+	  int irq = (command & PCI_COMMAND_DISABLE_INTx) ? 0 : p->irq;
+	  if (int_pin || irq)
+	    {
+	      printf("\tInterrupt: ");
+	      if (int_pin)
+		printf("pin %c", 'A' + int_pin);
+	      else
+		printf("unknown pin");
+	      if (command & PCI_COMMAND_DISABLE_INTx)
+		printf(" disabled");
+	      else if (irq)
+		printf(" routed to IRQ " PCIIRQ_FMT, irq);
+	      printf("\n");
+	    }
+	}
       if (p->numa_node != -1)
 	printf("\tNUMA node: %d\n", p->numa_node);
       if (iommu_group = pci_get_string_property(p, PCI_FILL_IOMMU_GROUP))
