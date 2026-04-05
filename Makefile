@@ -144,16 +144,8 @@ endif
 %.8 %.7 %.5: %.man
 	M=`echo $(DATE) | sed 's/-01-/-January-/;s/-02-/-February-/;s/-03-/-March-/;s/-04-/-April-/;s/-05-/-May-/;s/-06-/-June-/;s/-07-/-July-/;s/-08-/-August-/;s/-09-/-September-/;s/-10-/-October-/;s/-11-/-November-/;s/-12-/-December-/;s/\(.*\)-\(.*\)-\(.*\)/\3 \2 \1/'` ; sed <$< >$@ "s/@TODAY@/$$M/;s/@VERSION@/pciutils-$(VERSION)/;s#@IDSDIR@#$(IDSDIR)#;s#@PCI_IDS@#$(PCI_IDS)#"
 
-ctags:
-	rm -f tags
-	find . -name '*.[hc]' -exec ctags --append {} +
-
-TAGS:
-	rm -f TAGS
-	find . -name '*.[hc]' -exec etags --append {} +
-
 clean:
-	rm -f `find . -name "*~" -o -name "*.[oa]" -o -name "\#*\#" -o -name TAGS -o -name core -o -name "*.orig"`
+	rm -f `find . -name "*~" -o -name "*.[oa]" -o -name "\#*\#" -o -name core -o -name "*.orig"`
 	rm -f update-pciids lspci$(EXEEXT) setpci$(EXEEXT) example$(EXEEXT) lib/config.* *.[578] pci.ids.gz lib/*.pc lib/*.so lib/*.so.* lib/*.dll lib/*.def lib/dllrsrc.rc *-rsrc.rc tags pcilmr$(EXEEXT)
 	rm -rf maint/dist
 
