@@ -191,7 +191,7 @@ pci_reset_properties(struct pci_dev *d)
 }
 
 int
-pci_fill_info_v313(struct pci_dev *d, int flags)
+pci_fill_info_v315(struct pci_dev *d, int flags)
 {
   unsigned int uflags = flags;
   if (uflags & PCI_FILL_RESCAN)
@@ -205,15 +205,16 @@ pci_fill_info_v313(struct pci_dev *d, int flags)
 }
 
 /* In version 3.1, pci_fill_info got new flags => versioned alias */
-/* In versions 3.2, 3.3, 3.4, 3.5, 3.8 and 3.12, the same has happened */
-STATIC_ALIAS(int pci_fill_info(struct pci_dev *d, int flags), pci_fill_info_v313(d, flags));
-DEFINE_ALIAS(int pci_fill_info_v30(struct pci_dev *d, int flags), pci_fill_info_v313);
-DEFINE_ALIAS(int pci_fill_info_v31(struct pci_dev *d, int flags), pci_fill_info_v313);
-DEFINE_ALIAS(int pci_fill_info_v32(struct pci_dev *d, int flags), pci_fill_info_v313);
-DEFINE_ALIAS(int pci_fill_info_v33(struct pci_dev *d, int flags), pci_fill_info_v313);
-DEFINE_ALIAS(int pci_fill_info_v34(struct pci_dev *d, int flags), pci_fill_info_v313);
-DEFINE_ALIAS(int pci_fill_info_v35(struct pci_dev *d, int flags), pci_fill_info_v313);
-DEFINE_ALIAS(int pci_fill_info_v38(struct pci_dev *d, int flags), pci_fill_info_v313);
+/* In versions 3.2, 3.3, 3.4, 3.5, 3.8, 3.12, 3.15 the same has happened */
+STATIC_ALIAS(int pci_fill_info(struct pci_dev *d, int flags), pci_fill_info_v315(d, flags));
+DEFINE_ALIAS(int pci_fill_info_v30(struct pci_dev *d, int flags), pci_fill_info_v315);
+DEFINE_ALIAS(int pci_fill_info_v31(struct pci_dev *d, int flags), pci_fill_info_v315);
+DEFINE_ALIAS(int pci_fill_info_v32(struct pci_dev *d, int flags), pci_fill_info_v315);
+DEFINE_ALIAS(int pci_fill_info_v33(struct pci_dev *d, int flags), pci_fill_info_v315);
+DEFINE_ALIAS(int pci_fill_info_v34(struct pci_dev *d, int flags), pci_fill_info_v315);
+DEFINE_ALIAS(int pci_fill_info_v35(struct pci_dev *d, int flags), pci_fill_info_v315);
+DEFINE_ALIAS(int pci_fill_info_v38(struct pci_dev *d, int flags), pci_fill_info_v315);
+DEFINE_ALIAS(int pci_fill_info_v313(struct pci_dev *d, int flags), pci_fill_info_v315);
 SYMBOL_VERSION(pci_fill_info_v30, pci_fill_info@LIBPCI_3.0);
 SYMBOL_VERSION(pci_fill_info_v31, pci_fill_info@LIBPCI_3.1);
 SYMBOL_VERSION(pci_fill_info_v32, pci_fill_info@LIBPCI_3.2);
@@ -221,7 +222,8 @@ SYMBOL_VERSION(pci_fill_info_v33, pci_fill_info@LIBPCI_3.3);
 SYMBOL_VERSION(pci_fill_info_v34, pci_fill_info@LIBPCI_3.4);
 SYMBOL_VERSION(pci_fill_info_v35, pci_fill_info@LIBPCI_3.5);
 SYMBOL_VERSION(pci_fill_info_v38, pci_fill_info@LIBPCI_3.8);
-SYMBOL_VERSION(pci_fill_info_v313, pci_fill_info@@LIBPCI_3.13);
+SYMBOL_VERSION(pci_fill_info_v313, pci_fill_info@LIBPCI_3.13);
+SYMBOL_VERSION(pci_fill_info_v315, pci_fill_info@@LIBPCI_3.15);
 
 void
 pci_setup_cache(struct pci_dev *d, byte *cache, int len)

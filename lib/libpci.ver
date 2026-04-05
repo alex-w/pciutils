@@ -103,3 +103,8 @@ LIBPCI_3.13 {
 	global:
 		pci_fill_info;
 };
+
+LIBPCI_3.15 {
+	global:
+		pci_fill_info;
+};
