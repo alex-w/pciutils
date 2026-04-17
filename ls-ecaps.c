@@ -233,7 +233,9 @@ cap_aer(struct device *d, int where, int type)
 
 static void cap_dpc(struct device *d, int where)
 {
-  u16 l;
+  u16 cap, w, log_size;
+  u32 l, l0, l1, l2, l3;
+  int i;
 
   printf("Downstream Port Containment\n");
   if (verbose < 2)
@@ -242,24 +244,96 @@ static void cap_dpc(struct device *d, int where)
   if (!config_fetch(d, where + PCI_DPC_CAP, 8))
     return;
 
-  l = get_conf_word(d, where + PCI_DPC_CAP);
+  w = cap = get_conf_word(d, where + PCI_DPC_CAP);
+  log_size = PCI_DPC_CAP_RP_LOG(cap) | (!!(PCI_DPC_CAP_RP_PIO_LOG_SIZE4 & cap) << 4);
   printf("\t\tDpcCap:\tIntMsgNum %d, RPExt%c PoisonedTLP%c SwTrigger%c RP PIO Log %d, DL_ActiveErr%c\n",
-    PCI_DPC_CAP_INT_MSG(l), FLAG(l, PCI_DPC_CAP_RP_EXT), FLAG(l, PCI_DPC_CAP_TLP_BLOCK),
-    FLAG(l, PCI_DPC_CAP_SW_TRIGGER), PCI_DPC_CAP_RP_LOG(l), FLAG(l, PCI_DPC_CAP_DL_ACT_ERR));
+    PCI_DPC_CAP_INT_MSG(w), FLAG(w, PCI_DPC_CAP_RP_EXT), FLAG(w, PCI_DPC_CAP_TLP_BLOCK),
+    FLAG(w, PCI_DPC_CAP_SW_TRIGGER), log_size, FLAG(w, PCI_DPC_CAP_DL_ACT_ERR));
 
-  l = get_conf_word(d, where + PCI_DPC_CTL);
+  w = get_conf_word(d, where + PCI_DPC_CTL);
   printf("\t\tDpcCtl:\tTrigger:%x Cmpl%c INT%c ErrCor%c PoisonedTLP%c SwTrigger%c DL_ActiveErr%c\n",
-    PCI_DPC_CTL_TRIGGER(l), FLAG(l, PCI_DPC_CTL_CMPL), FLAG(l, PCI_DPC_CTL_INT),
-    FLAG(l, PCI_DPC_CTL_ERR_COR), FLAG(l, PCI_DPC_CTL_TLP), FLAG(l, PCI_DPC_CTL_SW_TRIGGER),
-    FLAG(l, PCI_DPC_CTL_DL_ACTIVE));
+    PCI_DPC_CTL_TRIGGER(w), FLAG(w, PCI_DPC_CTL_CMPL), FLAG(w, PCI_DPC_CTL_INT),
+    FLAG(w, PCI_DPC_CTL_ERR_COR), FLAG(w, PCI_DPC_CTL_TLP), FLAG(w, PCI_DPC_CTL_SW_TRIGGER),
+    FLAG(w, PCI_DPC_CTL_DL_ACTIVE));
 
-  l = get_conf_word(d, where + PCI_DPC_STATUS);
+  w = get_conf_word(d, where + PCI_DPC_STATUS);
   printf("\t\tDpcSta:\tTrigger%c Reason:%02x INT%c RPBusy%c TriggerExt:%02x RP PIO ErrPtr:%02x\n",
-    FLAG(l, PCI_DPC_STS_TRIGGER), PCI_DPC_STS_REASON(l), FLAG(l, PCI_DPC_STS_INT),
-    FLAG(l, PCI_DPC_STS_RP_BUSY), PCI_DPC_STS_TRIGGER_EXT(l), PCI_DPC_STS_PIO_FEP(l));
+    FLAG(w, PCI_DPC_STS_TRIGGER), PCI_DPC_STS_REASON(w), FLAG(w, PCI_DPC_STS_INT),
+    FLAG(w, PCI_DPC_STS_RP_BUSY), PCI_DPC_STS_TRIGGER_EXT(w), PCI_DPC_STS_PIO_FEP(w));
 
-  l = get_conf_word(d, where + PCI_DPC_SOURCE);
-  printf("\t\tSource:\t%04x\n", l);
+  w = get_conf_word(d, where + PCI_DPC_SOURCE);
+  printf("\t\tSource:\t%04x\n", w);
+
+  if ((cap & PCI_DPC_CAP_RP_EXT) && config_fetch(d, where + PCI_DPC_CAP + 8, 20 + 4 * log_size))
+    {
+      printf("\t\tRP PIO:\n");
+
+      l = get_conf_long(d, where + PCI_DPC_RP_PIO_STATUS);
+      printf("\t\t\tSta: CfgUR%c CfgCA%c CfgCTO%c IOUR%c IOCA%c IOCTO%c MemUR%c MemCA%c MemCTO%c\n",
+             FLAG(l, PCI_DPC_RP_PIO_CFG_UR), FLAG(l, PCI_DPC_RP_PIO_CFG_CA),
+             FLAG(l, PCI_DPC_RP_PIO_CFG_CTO), FLAG(l, PCI_DPC_RP_PIO_IO_UR),
+             FLAG(l, PCI_DPC_RP_PIO_IO_CA), FLAG(l, PCI_DPC_RP_PIO_IO_CTO),
+             FLAG(l, PCI_DPC_RP_PIO_MEM_UR), FLAG(l, PCI_DPC_RP_PIO_MEM_CA),
+             FLAG(l, PCI_DPC_RP_PIO_MEM_CTO));
+
+      l = get_conf_long(d, where + PCI_DPC_RP_PIO_MASK);
+      printf("\t\t\tMsk: CfgUR%c CfgCA%c CfgCTO%c IOUR%c IOCA%c IOCTO%c MemUR%c MemCA%c MemCTO%c\n",
+             FLAG(l, PCI_DPC_RP_PIO_CFG_UR), FLAG(l, PCI_DPC_RP_PIO_CFG_CA),
+             FLAG(l, PCI_DPC_RP_PIO_CFG_CTO), FLAG(l, PCI_DPC_RP_PIO_IO_UR),
+             FLAG(l, PCI_DPC_RP_PIO_IO_CA), FLAG(l, PCI_DPC_RP_PIO_IO_CTO),
+             FLAG(l, PCI_DPC_RP_PIO_MEM_UR), FLAG(l, PCI_DPC_RP_PIO_MEM_CA),
+             FLAG(l, PCI_DPC_RP_PIO_MEM_CTO));
+
+      l = get_conf_long(d, where + PCI_DPC_RP_PIO_SEVERITY);
+      printf("\t\t\tSev: CfgUR%c CfgCA%c CfgCTO%c IOUR%c IOCA%c IOCTO%c MemUR%c MemCA%c MemCTO%c\n",
+             FLAG(l, PCI_DPC_RP_PIO_CFG_UR), FLAG(l, PCI_DPC_RP_PIO_CFG_CA),
+             FLAG(l, PCI_DPC_RP_PIO_CFG_CTO), FLAG(l, PCI_DPC_RP_PIO_IO_UR),
+             FLAG(l, PCI_DPC_RP_PIO_IO_CA), FLAG(l, PCI_DPC_RP_PIO_IO_CTO),
+             FLAG(l, PCI_DPC_RP_PIO_MEM_UR), FLAG(l, PCI_DPC_RP_PIO_MEM_CA),
+             FLAG(l, PCI_DPC_RP_PIO_MEM_CTO));
+
+      l = get_conf_long(d, where + PCI_DPC_RP_PIO_SYSERROR);
+      printf("\t\t\tErr: CfgUR%c CfgCA%c CfgCTO%c IOUR%c IOCA%c IOCTO%c MemUR%c MemCA%c MemCTO%c\n",
+             FLAG(l, PCI_DPC_RP_PIO_CFG_UR), FLAG(l, PCI_DPC_RP_PIO_CFG_CA),
+             FLAG(l, PCI_DPC_RP_PIO_CFG_CTO), FLAG(l, PCI_DPC_RP_PIO_IO_UR),
+             FLAG(l, PCI_DPC_RP_PIO_IO_CA), FLAG(l, PCI_DPC_RP_PIO_IO_CTO),
+             FLAG(l, PCI_DPC_RP_PIO_MEM_UR), FLAG(l, PCI_DPC_RP_PIO_MEM_CA),
+             FLAG(l, PCI_DPC_RP_PIO_MEM_CTO));
+
+      l = get_conf_long(d, where + PCI_DPC_RP_PIO_EXCEPTION);
+      printf("\t\t\tExc: CfgUR%c CfgCA%c CfgCTO%c IOUR%c IOCA%c IOCTO%c MemUR%c MemCA%c MemCTO%c\n",
+             FLAG(l, PCI_DPC_RP_PIO_CFG_UR), FLAG(l, PCI_DPC_RP_PIO_CFG_CA),
+             FLAG(l, PCI_DPC_RP_PIO_CFG_CTO), FLAG(l, PCI_DPC_RP_PIO_IO_UR),
+             FLAG(l, PCI_DPC_RP_PIO_IO_CA), FLAG(l, PCI_DPC_RP_PIO_IO_CTO),
+             FLAG(l, PCI_DPC_RP_PIO_MEM_UR), FLAG(l, PCI_DPC_RP_PIO_MEM_CA),
+             FLAG(l, PCI_DPC_RP_PIO_MEM_CTO));
+
+      if (log_size >= 4)
+        {
+          l0 = get_conf_long(d, where + PCI_DPC_RP_PIO_HEADER_LOG);
+          l1 = get_conf_long(d, where + PCI_DPC_RP_PIO_HEADER_LOG + 4);
+          l2 = get_conf_long(d, where + PCI_DPC_RP_PIO_HEADER_LOG + 8);
+          l3 = get_conf_long(d, where + PCI_DPC_RP_PIO_HEADER_LOG + 12);
+          printf("\t\t\tHeaderLog: %08x %08x %08x %08x\n", l0, l1, l2, l3);
+        }
+
+      if (log_size >= 5)
+        {
+          l = get_conf_long(d, where + PCI_DPC_RP_PIO_IMPSPEC_LOG);
+          printf("\t\t\tImpSpecLog: %08x\n", l);
+        }
+
+      if (log_size >= 6)
+        {
+          printf("\t\t\tTLPPrefixLog:");
+          for (i = 5; i < log_size; i++)
+            {
+              l = get_conf_long(d, where + PCI_DPC_RP_PIO_TLP_PREFIX_LOG + (i - 5) * 4);
+              printf(" %08x", l);
+            }
+          printf("\n");
+        }
+    }
 }
 
 static void

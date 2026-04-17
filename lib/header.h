@@ -1454,6 +1454,7 @@
 #define  PCI_DPC_CAP_SW_TRIGGER	0x80		/* DPC Software Trigger */
 #define  PCI_DPC_CAP_RP_LOG(x)	(((x) >> 8) & 0xf) /* DPC RP PIO Log Size */
 #define  PCI_DPC_CAP_DL_ACT_ERR	0x1000		/* DPC DL_Active ERR_COR Signal */
+#define  PCI_DPC_CAP_RP_PIO_LOG_SIZE4	0x2000	/* RP PIO Log Size [4] */
 #define PCI_DPC_CTL		6	/* DPC Control */
 #define  PCI_DPC_CTL_TRIGGER(x) ((x) & 0x3)	/* DPC Trigger Enable */
 #define  PCI_DPC_CTL_CMPL	0x4		/* DPC Completion Control */
@@ -1470,6 +1471,23 @@
 #define  PCI_DPC_STS_TRIGGER_EXT(x) (((x) >> 5) & 0x3) /* Trigger Reason Extension */
 #define  PCI_DPC_STS_PIO_FEP(x) (((x) >> 8) & 0x1f) /* DPC PIO First Error Pointer */
 #define PCI_DPC_SOURCE		10	/* DPC Source ID */
+#define PCI_DPC_RP_PIO_STATUS	0xc	/* DPC RP PIO Status */
+#define  PCI_DPC_RP_PIO_CFG_UR		0x00000001	/* Cfg Request UR Completion */
+#define  PCI_DPC_RP_PIO_CFG_CA		0x00000002	/* Cfg Request CA Completion */
+#define  PCI_DPC_RP_PIO_CFG_CTO		0x00000004	/* Cfg Request Completion Timeout */
+#define  PCI_DPC_RP_PIO_IO_UR		0x00000100	/* I/O Request UR Completion */
+#define  PCI_DPC_RP_PIO_IO_CA		0x00000200	/* I/O Request CA Completion */
+#define  PCI_DPC_RP_PIO_IO_CTO		0x00000400	/* I/O Request Completion Timeout */
+#define  PCI_DPC_RP_PIO_MEM_UR		0x00010000	/* Mem Request UR Completion */
+#define  PCI_DPC_RP_PIO_MEM_CA		0x00020000	/* Mem Request CA Completion */
+#define  PCI_DPC_RP_PIO_MEM_CTO		0x00040000	/* Mem Request Completion Timeout */
+#define PCI_DPC_RP_PIO_MASK	0x10	/* DPC RP PIO Mask */
+#define PCI_DPC_RP_PIO_SEVERITY	0x14	/* DPC RP PIO Severity */
+#define PCI_DPC_RP_PIO_SYSERROR	0x18	/* DPC RP PIO SysError */
+#define PCI_DPC_RP_PIO_EXCEPTION	0x1c	/* DPC RP PIO Exception */
+#define PCI_DPC_RP_PIO_HEADER_LOG	0x20	/* DPC RP PIO Header Log */
+#define PCI_DPC_RP_PIO_IMPSPEC_LOG	0x30	/* DPC RP PIO ImpSpec Log */
+#define PCI_DPC_RP_PIO_TLP_PREFIX_LOG	0x34	/* DPC RP PIO TLP Prefix Log */
 
 /* L1 PM Substates Extended Capability */
 #define PCI_L1PM_SUBSTAT_CAP	0x4	/* L1 PM Substate Capability */
