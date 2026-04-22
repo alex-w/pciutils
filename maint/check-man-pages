@@ -1,0 +1,17 @@
+#!/bin/bash
+# Lint generated man pages
+set -e
+
+check ()
+{
+	echo ">>> Checking $1"
+	groff -mandoc -t -ww -b -z -K utf8 $1 || true
+	mandoc -T lint $1 |
+		grep -v "STYLE: input text line longer than" |
+		grep -v "STYLE: lower case character in document title:" ||
+		true
+}
+
+for man in *.[1-9] ; do
+	check $man
+done
