@@ -11,7 +11,6 @@ and their configuration space.
 
 .SH ACCESS METHODS
 
-.PP
 The library supports a variety of methods to access the configuration space
 on different operating systems. By default, the first matching method in this
 list is used, but you can specify override the decision (see the \fB\-A\fP switch
@@ -176,7 +175,6 @@ information available.
 
 .SH PARAMETERS
 
-.PP
 The library is controlled by several parameters. They should have sensible default
 values, but in case you want to do something unusual (or even something weird),
 you can override them

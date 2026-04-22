@@ -185,7 +185,6 @@ Shows
 version. This option should be used stand-alone.
 
 .SS PCI access options
-.PP
 The PCI utilities use the PCI library to talk to PCI devices (see
 \fBpcilib\fP(7) for details). You can use the following options to
 influence its behavior:

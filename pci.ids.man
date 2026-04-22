@@ -37,6 +37,7 @@ The
 .B pci.ids
 file is generated from the PCI ID database, which is maintained at
 .UR https://pci-ids.ucw.cz/
+https://pci-ids.ucw.cz/
 .UE .
 If you find any IDs missing from the list, please contribute them
 to the database.
