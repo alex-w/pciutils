@@ -4,15 +4,17 @@ pcilib \- a library for accessing PCI devices
 
 .SH DESCRIPTION
 
-The PCI library (also known as \fIpcilib\fP and \fIlibpci\fP) is a portable library
-for accessing PCI devices and their configuration space.
+The PCI library
+(also known as \fIpcilib\fP and \fIlibpci\fP)
+is a portable library for accessing PCI devices
+and their configuration space.
 
 .SH ACCESS METHODS
 
 .PP
 The library supports a variety of methods to access the configuration space
 on different operating systems. By default, the first matching method in this
-list is used, but you can specify override the decision (see the \fB-A\fP switch
+list is used, but you can specify override the decision (see the \fB\-A\fP switch
 of \fIlspci\fP).
 
 .TP
@@ -57,8 +59,10 @@ parameter.
 .B ecam
 Direct hardware access via PCIe ECAM (Enhanced Configuration Access Mechanism).
 Available on all PCIe-compliant hardware. Requires root privileges and access
-to physical memory (on Linux systems disabled CONFIG_STRICT_DEVMEM option). On
-ACPI compatible systems is ECAM mapping read from the MCFG table specified by the
+to physical memory
+(on Linux systems disabled CONFIG_STRICT_DEVMEM option).
+On ACPI compatible systems ECAM mapping is read from the MCFG table
+specified by the
 .B ecam.acpimcfg
 parameter. On EFI compatible systems, ACPI MCFG table can be located in physical
 memory via EFI system table specified by the
@@ -95,7 +99,7 @@ device on OpenBSD. Requires root privileges.
 .B dump
 Read the contents of configuration registers from a file specified in the
 .B dump.name
-parameter. The format corresponds to the output of \fIlspci\fP \fB-x\fP.
+parameter. The format corresponds to the output of \fIlspci\fP \fB\-x\fP.
 .TP
 .B darwin
 Access method used on Mac OS X / Darwin. Must be run as root and the system
@@ -139,23 +143,24 @@ both 32-bit and also 64-bit OS host systems, therefore i386 libpci application
 with win32-kldbg method can access PCI config space also on AMD64 host system.
 kldbgdrv.sys driver has some restrictions. Process needs to have Debug privilege
 and Windows system has to be booted with Debugging option. Debugging option can
-be enabled by calling (takes effect after next boot):
+be enabled by calling
+(takes effect after next boot):
 .B bcdedit /debug on
 .IP
 Download links for WinDbg 6.12.2.633 standalone installer from Microsoft Windows
 SDK for Windows 7 and .NET Framework 4:
 .br
-amd64: https://download.microsoft.com/download/A/6/A/A6AC035D-DA3F-4F0C-ADA4-37C8E5D34E3D/setup/WinSDKDebuggingTools_amd64/dbg_amd64.msi
+amd64: https://download.microsoft.com/\:download/\:A/\:6/\:A/\:A6AC035D-DA3F-4F0C-ADA4-37C8E5D34E3D/\:setup/\:WinSDKDebuggingTools_amd64/\:dbg_amd64.msi
 .br
-ia64: https://download.microsoft.com/download/A/6/A/A6AC035D-DA3F-4F0C-ADA4-37C8E5D34E3D/setup/WinSDKDebuggingTools_ia64/dbg_ia64.msi
+ia64: https://download.microsoft.com/\:download/\:A/\:6/\:A/\:A6AC035D-DA3F-4F0C-ADA4-37C8E5D34E3D/\:setup/\:WinSDKDebuggingTools_ia64/\:dbg_ia64.msi
 .br
-x86: https://download.microsoft.com/download/A/6/A/A6AC035D-DA3F-4F0C-ADA4-37C8E5D34E3D/setup/WinSDKDebuggingTools/dbg_x86.msi
+x86: https://download.microsoft.com/\:download/\:A/\:6/\:A/\:A6AC035D-DA3F-4F0C-ADA4-37C8E5D34E3D/\:setup/\:WinSDKDebuggingTools/\:dbg_x86.msi
 .IP
 Archived download links of previous WinDbg versions:
 .br
-https://web.archive.org/web/20110221133326/https://www.microsoft.com/whdc/devtools/debugging/installx86.mspx
+https://web.archive.org/\:web/\:20110221133326/\:https:/\:/\:www.microsoft.com/\:whdc/\:devtools/\:debugging/\:installx86.mspx
 .br
-https://web.archive.org/web/20110214012715/https://www.microsoft.com/whdc/devtools/debugging/install64bit.mspx
+https://web.archive.org/\:web/\:20110214012715/\:https:/\:/\:www.microsoft.com/\:whdc/\:devtools/\:debugging/\:install64bit.mspx
 .TP
 .B aos-expansion
 Access method used on PowerPC Amiga running OS4+. Access is made through Expansion.library. It offers read and write access to configuration space.
@@ -174,7 +179,8 @@ information available.
 .PP
 The library is controlled by several parameters. They should have sensible default
 values, but in case you want to do something unusual (or even something weird),
-you can override them (see the \fB-O\fP switch of \fIlspci\fP).
+you can override them
+(see the \fB\-O\fP switch of \fIlspci\fP).
 
 .SS Parameters of specific access methods
 

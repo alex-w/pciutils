@@ -3,13 +3,13 @@
 pcilmr \- margin PCIe Links
 .SH SYNOPSIS
 .B pcilmr
-.RB [ "--margin" ]
+.RB [ "\-\-margin" ]
 .RI [ "<common options>" ] " <link port> " [ "<link options>" "] [" "<link port> " [ "<link options>" ] " ..." ]
 .br
-.B pcilmr --full
+.B pcilmr \-\-full
 .RI [ "<common options>" ]
 .br
-.B pcilmr --scan
+.B pcilmr \-\-scan
 .SH CONFIGURATION
 List of the requirements for links and system settings
 to run the margining test.
@@ -22,8 +22,8 @@ Turn off PCIe Leaky Bucket Feature, Re-Equalization and Link Degradation;
 .IP \[bu]
 Set Error Thresholds to 0;
 .IP \[bu]
-Intel VMD for NVMe SSDs - in case of strange behavior of the
-.BR pcilmr,
+Intel VMD for NVMe SSDs \(en in case of strange behavior of the
+.BR pcilmr ,
 try to run it with the VMD turned off.
 .PP
 .B Device (link) requirements:
@@ -37,7 +37,7 @@ utility supports 16 GT/s and 32 GT/s Links);
 Link Downstream Component must be at D0 Power Management State.
 .RE
 .IP
-.I "Configured by the utility during operation, utility set them to their original "
+.I "Configured by the utility during operation, utility set them to their original"
 .I "state after receiving the results:"
 .RS
 .IP \[bu] 3
@@ -48,6 +48,7 @@ Downstream Port and Upstream Port;
 .IP \[bu]
 The Hardware Autonomous Width Disable bit of the Link Control register must be Set in both the
 Downstream Port and Upstream Port.
+.RE
 .SH DESCRIPTION
 .B pcilmr
 utility allows you to take advantage of the PCIe Lane Margining at the Receiver
@@ -117,14 +118,14 @@ calculate EW or EH as a double one side result.
 
 If info for specific device is available, you can configure grading criteria
 and tweak utility behavior in one-side only cases for your device using
-.I -g
+.I \-g
 link specific option (see below).
 
 .SH HARDWARE QUIRKS SUPPORT
 
 Thanks to testing or directly from the manufacturer's documentation, we know that
 some devices require special treatment during the margining.
-Utility detects such devices based on their Vendor ID - Device ID pair.
+Utility detects such devices based on their Vendor ID \(en Device ID pair.
 Right now the list of special devices is hardcoded in
 .I margin_hw
 file. For such devices utility can automatically adjust port margining parameters
@@ -139,40 +140,40 @@ will change device MaxVoltageOffset value and will force the use of
 .SS Device Specifier
 .B "You can specify Downstream or Upstream Port of the Link."
 .TP
-.B "<device/component>" \t
+.B "<device/component> \t"
 .RI [ "<domain>" :] <bus> : <dev> . <func>
 (see
 .BR lspci (8))
 .SS Utility Modes
 .TP
-.BI --margin " <downstream component> ..."
+.BI \-\-margin " <downstream component> ..."
 Margin selected Links.
 .TP
-.B --full
+.B \-\-full
 Margin all ready for testing (in a meaning similar to the
-.B --scan
+.B \-\-scan
 option) Links in the system (one by one).
 .TP
-.B --scan
+.B \-\-scan
 Scan for Links with negotiated speed 16 GT/s or higher. Mark "Ready" those of them
 in which at least one of the Link sides have Margining Ready bit set meaning that
 these Links are ready for testing and you can run utility on them.
 .SS Margining Common (for all specified links) options
-.B -c
+.B \-c
 Print Device Lane Margining Capabilities only. Do not run margining.
 .TP
-.BI -e " <errors>"
+.BI \-e " <errors>"
 Specify Error Count Limit for margining.
 .br
 Default: 4.
 .TP
-.BI -o " <directory>"
+.BI \-o " <directory>"
 Save margining results in csv form into the specified directory. Utility
 will generate file with the name in form of
 .RI "\[dq]lmr_" "<port>" "_Rx" # _ <timestamp> ".csv\[dq]"
 for each successfully tested receiver.
 .TP
-.BI -d " <time>"
+.BI \-d " <time>"
 Specify dwell time in seconds for the margining step.
 .br
 Default: 1 s
@@ -187,52 +188,52 @@ determine Lane Reversal and tune its calls.
 .br
 Default: all link lanes.
 .TP
-\fB-r\fI <recvn>\fP[\fI,<recvn>...\fP]
+\fB\-r\fI <recvn>\fP[\fI,<recvn>...\fP]
 Specify Receivers to select margining targets.
 .br
 Default: all available Receivers (including Retimers).
 .TP
-.BI -p " <parallel_lanes>"
+.BI \-p " <parallel_lanes>"
 Specify number of lanes to margin simultaneously.
 .br
 According to spec it's possible for Receiver to margin up to MaxLanes + 1
 lanes simultaneously, but during testing, performing margining on several
 lanes simultaneously led to results that were different from sequential
 margining, so this feature requires additional verification and
-.I -p
+.I \-p
 option right now is for experiments mostly.
 .br
 Default: 1.
 .PP
-.B "Use only one of -T/-t options at the same time (same for -V/-v)."
+.B "Use only one of \-T/\-t options at the same time (same for \-V/\-v)."
 .br
 .B "Without these options utility will use MaxSteps from Device"
 .B "capabilities as test limit."
 .TP
-.B -T
+.B \-T
 Time Margining will continue until the Error Count is no more
 than an Error Count Limit. Use this option to find Link limit.
 .TP
-.BI -t " <steps>"
+.BI \-t " <steps>"
 Specify maximum number of steps for Time Margining.
 .TP
-.B -V
+.B \-V
 Same as
-.I -T
+.I \-T
 option, but for Voltage.
 .TP
-.BI -v " <steps>"
+.BI \-v " <steps>"
 Specify maximum number of steps for Voltage Margining.
 .TP
-\fB-g\fI <recvn>\fPt=\fI<criteria>\fP{%|ps}[,f]
+\fB\-g\fI <recvn>\fPt=\fI<criteria>\fP{%|ps}\fR[\fP,f\fR]\fP
 .TP
-.IB "   <recvn>" t=f[, "<criteria>" "{%|ps}]"
+.IB "   <recvn>" t=f\fR[\fP, "<criteria>" "{%\fR|\fPps}\fR]\fP"
 .TP
-.IB "   <recvn>" v= "<criteria>" "[,f]"
+.IB "   <recvn>" v= "<criteria>" "\fR[\fP,f\fR]\fP"
 .TP
-.IB "   <recvn>" v=f[, "<criteria>" ]
-Specify pass/fail grading criteria for eye width (timing - t) or height
-(voltage - v) for one of the link receivers. For EW you must choose one of the
+.IB "   <recvn>" v=f\fR[\fP, "<criteria>" \fR]\fP
+Specify pass/fail grading criteria for eye width (timing \-t) or height
+(voltage \-v) for one of the link receivers. For EW you must choose one of the
 units (% UI or ps), for EH mV is used.
 .br
 Additional flag
@@ -242,7 +243,7 @@ margining. In such cases by default utility will calculate EW or EH as a
 double one side result. You can add
 .I f
 flag for
-.I -g
+.I \-g
 option to tell the utility that the result in one direction is actually the
 measurement of the full eye and it does not need to be multiplied. This is so called
 .RI ' "one side is the whole" "' grading mode."
@@ -250,10 +251,10 @@ measurement of the full eye and it does not need to be multiplied. This is so ca
 .SH EXAMPLES
 Utility syntax example:
 .RS
-.BI "pcilmr -o " "csv ab:0.0 " "-r " "1,6 " "-g " "1t=20% " "-g " "1v=f,30 52:0.0 " "-l " "0,1,2 " "-TV"
+.BI "pcilmr \-o " "csv ab:0.0 " "\-r " "1,6 " "\-g " "1t=20% " "\-g " "1v=f,30 52:0.0 " "\-l " "0,1,2 " "\-TV"
 .RE
 
-.UR https://gist.github.com/bombanya/f2b15263712757ffba1a11eea011c419
+.UR https://gist.github.com/\:bombanya/\:f2b15263712757ffba1a11eea011c419
 Examples of collected results on different systems.
 .UE
 
