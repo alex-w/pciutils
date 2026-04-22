@@ -71,9 +71,14 @@ LMR=margin_hw.o margin.o margin_log.o margin_results.o margin_args.o
 LMROBJS=$(addprefix lmr/,$(LMR))
 LMRINC=lmr/lmr.h $(UTILINC)
 
+MAN5_PAGES=pci.ids.5
+MAN7_PAGES=pcilib.7
+MAN8_PAGES=lspci.8 setpci.8 update-pciids.8 pcilmr.8
+MAN_PAGES=$(MAN5_PAGES) $(MAN7_PAGES) $(MAN8_PAGES)
+
 export
 
-all: lib/$(PCIIMPLIB) lspci$(EXEEXT) setpci$(EXEEXT) example$(EXEEXT) lspci.8 setpci.8 pcilib.7 pci.ids.5 update-pciids update-pciids.8 $(PCI_IDS) pcilmr$(EXEEXT) pcilmr.8
+all: lib/$(PCIIMPLIB) lspci$(EXEEXT) setpci$(EXEEXT) example$(EXEEXT) $(MAN_PAGES) update-pciids $(PCI_IDS) pcilmr$(EXEEXT)
 
 lib/$(PCIIMPLIB): $(PCIINC) force
 	$(MAKE) -C lib all
@@ -169,9 +174,9 @@ ifneq ($(IDSDIR),)
 else
 	$(INSTALL) -c -m 644 $(PCI_IDS) $(DESTDIR)$(SBINDIR)
 endif
-	$(INSTALL) -c -m 644 lspci.8 setpci.8 pcilmr.8 update-pciids.8 $(DESTDIR)$(MANDIR)/man8
-	$(INSTALL) -c -m 644 pcilib.7 $(DESTDIR)$(MANDIR)/man7
-	$(INSTALL) -c -m 644 pci.ids.5 $(DESTDIR)$(MANDIR)/man5
+	$(INSTALL) -c -m 644 $(MAN5_PAGES) $(DESTDIR)$(MANDIR)/man5
+	$(INSTALL) -c -m 644 $(MAN7_PAGES) $(DESTDIR)$(MANDIR)/man7
+	$(INSTALL) -c -m 644 $(MAN8_PAGES) $(DESTDIR)$(MANDIR)/man8
 ifeq ($(SHARED),yes)
 ifeq ($(LIBEXT),dylib)
 	ln -sf $(PCILIB) $(DESTDIR)$(LIBDIR)/$(LIBNAME).$(ABI_VERSION).$(LIBEXT)
@@ -221,9 +226,9 @@ ifneq ($(IDSDIR),)
 else
 	rm -f $(DESTDIR)$(SBINDIR)/$(PCI_IDS)
 endif
-	rm -f $(DESTDIR)$(MANDIR)/man8/lspci.8 $(DESTDIR)$(MANDIR)/man8/setpci.8 $(DESTDIR)$(MANDIR)/man8/pcilmr.8 $(DESTDIR)$(MANDIR)/man8/update-pciids.8
-	rm -f $(DESTDIR)$(MANDIR)/man7/pcilib.7
-	rm -f $(DESTDIR)$(MANDIR)/man5/pci.ids.5
+	rm -f $(addprefix $(DESTDIR)$(MANDIR)/man5/,$(MAN5_PAGES))
+	rm -f $(addprefix $(DESTDIR)$(MANDIR)/man7/,$(MAN7_PAGES))
+	rm -f $(addprefix $(DESTDIR)$(MANDIR)/man8/,$(MAN8_PAGES))
 ifeq ($(SHARED)_$(LIBEXT),yes_dll)
 	rm -f $(DESTDIR)$(SBINDIR)/$(PCILIB)
 else
