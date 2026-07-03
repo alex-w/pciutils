@@ -160,6 +160,18 @@ margin_apply_hw_quirks(struct margin_recv *recv, struct margin_link_args *args)
     }
 }
 
+static double
+margin_max_timing_offset_pct(u8 link_speed)
+{
+  return link_speed >= 6 ? 35.0 : 50.0;
+}
+
+static double
+margin_volt_scale_mv(u8 link_speed)
+{
+  return link_speed >= 6 ? (10.0 / 3.0) : 10.0;
+}
+
 static bool
 read_params_internal(struct margin_dev *dev, u8 recvn, bool lane_reversal,
                      struct margin_params *params)
@@ -350,12 +362,10 @@ margin_test_receiver(struct margin_dev *dev, u8 recvn, struct margin_link_args *
 
   results->tim_off_reported = params.timing_offset != 0;
   results->volt_off_reported = params.volt_offset != 0;
-  double tim_offset = results->tim_off_reported ? (double)params.timing_offset : 50.0;
-  double volt_offset = results->volt_off_reported ? (double)params.volt_offset : 50.0;
-
-  results->tim_coef = tim_offset / (double)params.timing_steps;
-  results->volt_coef = volt_offset / (double)params.volt_steps * 10.0;
-
+  double tim_offset = results->tim_off_reported ? (double) params.timing_offset : margin_max_timing_offset_pct(dev->link_speed);
+  double volt_offset = results->volt_off_reported ? (double) params.volt_offset : 50.0;
+  results->tim_coef = tim_offset / (double) params.timing_steps;
+  results->volt_coef = volt_offset / (double) params.volt_steps * margin_volt_scale_mv(dev->link_speed);
   results->lane_reversal = recv.lane_reversal;
   results->link_speed = dev->link_speed;
   results->test_status = MARGIN_TEST_OK;

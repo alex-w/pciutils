@@ -87,6 +87,9 @@ margin_log_recvn(struct margin_recv *recv)
 void
 margin_log_receiver(struct margin_recv *recv)
 {
+  double max_timing_offset = recv->dev->link_speed >= 6 ? 35.0 : 50.0;
+  double max_voltage_mv = recv->dev->link_speed >= 6 ? (500.0 / 3.0) : 500.0;
+
   margin_log("\nError Count Limit = %d\n", recv->error_limit);
   margin_log("Parallel Lanes: %d\n", recv->parallel_lanes);
   margin_log("Margining dwell time: %d s\n\n", recv->dwell_time);
@@ -101,10 +104,12 @@ margin_log_receiver(struct margin_recv *recv)
 
   if (recv->params->timing_offset == 0)
     margin_log("\nWarning: Vendor chose not to report the Max Timing Offset.\n"
-               "Utility will use its max possible value - 50 (50%% UI).\n");
+               "Utility will use its max possible value - %.0f (%.1f%% UI).\n",
+               max_timing_offset, max_timing_offset);
   if (recv->params->volt_support && recv->params->volt_offset == 0)
     margin_log("\nWarning: Vendor chose not to report the Max Voltage Offset.\n"
-               "Utility will use its max possible value - 50 (500 mV).\n");
+               "Utility will use its max possible value - 50 (%.1f mV).\n",
+               max_voltage_mv);
 }
 
 void
